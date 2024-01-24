@@ -1261,12 +1261,12 @@ public class QuPathGUI {
 		}
 		if (!unsavedViewers.isEmpty()) {
 			if (unsavedViewers.size() == 1) {
-				if (!viewerManager.closeViewer("Quit QuPath", unsavedViewers.iterator().next())) {
+				if (!viewerManager.closeViewer("Quit X-ZellPath", unsavedViewers.iterator().next())) {
 					logger.trace("Pressed no to close viewer!");
 					e.consume();
 					return;
 				}
-			} else if (!Dialogs.showYesNoDialog("Quit QuPath", "Are you sure you want to quit?\n\nUnsaved changes in " + unsavedViewers.size() + " viewers will be lost.")) {
+			} else if (!Dialogs.showYesNoDialog("Quit X-ZellPath", "Are you sure you want to quit?\n\nUnsaved changes in " + unsavedViewers.size() + " viewers will be lost.")) {
 				logger.trace("Pressed no to quit window!");
 				e.consume();
 				return;
@@ -1285,7 +1285,7 @@ public class QuPathGUI {
 
 		// Check if there is a script running
 		if (scriptRunning.get()) {
-			if (!Dialogs.showYesNoDialog("Quit QuPath", "A script is currently running! Quit anyway?")) {
+			if (!Dialogs.showYesNoDialog("Quit X-ZellPath", "A script is currently running! Quit anyway?")) {
 				logger.trace("Pressed no to quit window with script running!");
 				e.consume();
 				return;
@@ -4490,7 +4490,7 @@ public class QuPathGUI {
 	
 	private StringBinding titleBinding = Bindings.createStringBinding(
 				() -> {
-					String name = "QuPath";
+					String name = "X-Zell Hybrid Microscope";
 					var versionString = getVersionString();
 					if (versionString != null)
 						name = name + " (" + versionString + ")";
