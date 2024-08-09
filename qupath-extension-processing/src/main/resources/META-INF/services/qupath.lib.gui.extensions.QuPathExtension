@@ -1,2 +1,5 @@
 qupath.imagej.gui.IJExtension
+qupath.reordered.image.viewer.HelloWorldExtension
+qupath.reordered.image.viewer.RabbitMqExtension
+qupath.reordered.image.viewer.AdjustBrightnessExtension
 qupath.process.gui.ProcessingExtension
