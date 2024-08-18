@@ -17,6 +17,6 @@ module qupath.extension.processing {
 	exports qupath.imagej.gui;
 	
 	provides qupath.lib.gui.extensions.QuPathExtension with 
-		qupath.imagej.gui.IJExtension, qupath.reordered.image.viewer.HelloWorldExtension, qupath.reordered.image.viewer.RabbitMqExtension, qupath.reordered.image.viewer.AdjustBrightnessExtension, qupath.opencv.gui.OpenCVExtension;
+		qupath.imagej.gui.IJExtension, qupath.helloworld.HelloWorldExtension, qupath.reordered.image.viewer.ReorderedChannelViewerExtension, qupath.adjustbrightness.AdjustBrightnessExtension, qupath.opencv.gui.OpenCVExtension;
 	
 }

@@ -1,4 +1,4 @@
-package qupath.reordered.image.viewer.commands;
+package qupath.adjustbrightness.commands;
 
 public class AntibodyInfo {
     public Integer ChannelNumber;

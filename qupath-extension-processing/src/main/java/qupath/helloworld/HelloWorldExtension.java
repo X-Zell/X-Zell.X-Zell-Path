@@ -1,4 +1,4 @@
-package qupath.reordered.image.viewer;
+package qupath.helloworld;
 
 
 import javafx.scene.control.Menu;

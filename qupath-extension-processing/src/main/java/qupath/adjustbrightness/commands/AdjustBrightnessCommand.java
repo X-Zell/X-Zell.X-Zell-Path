@@ -1,9 +1,8 @@
-package qupath.reordered.image.viewer.commands;
+package qupath.adjustbrightness.commands;
 
 import javafx.application.Platform;
 import qupath.lib.gui.QuPathGUI;
 import qupath.lib.gui.viewer.QuPathViewer;
-import qupath.lib.gui.viewer.QuPathViewerPlus;
 import qupath.lib.images.ImageData;
 import qupath.lib.projects.Project;
 import qupath.lib.projects.ProjectImageEntry;
@@ -16,7 +15,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 import static qupath.lib.gui.scripting.QPEx.getCurrentViewer;
+import static qupath.lib.gui.scripting.QPEx.setChannelDisplayRange;
 import static qupath.lib.scripting.QP.makeRGB;
+import static qupath.lib.scripting.QP.setChannelColors;
 
 public class AdjustBrightnessCommand implements Runnable {
 
@@ -68,48 +69,7 @@ public class AdjustBrightnessCommand implements Runnable {
 
 //            ActionLogger logger = this.logger;
 
-            runLater.accept(() -> {
-                try {
-                    Integer[] colors = Arrays.stream(antibodyInfos)
-                            .map(AntibodyInfo::getColorCode)
-                            .map(AdjustBrightnessCommand::getRgbFromColorCode)
-                            .toArray(Integer[]::new);
-                    qpExWrapper.setChannelColors(imageDataCurrent, colors);
-//                    logger.logInfo("Channel colors set", actionId);
-//                    logger.logInfo("Commencing setting of channel display ranges", actionId);
-                    for (int i = 0; i < antibodyInfos.length; i++) {
-                        qpExWrapper.setChannelDisplayRange(imageDataCurrent, i, antibodyInfos[i].BrightnessMin, antibodyInfos[i].BrightnessMax);
-//                        logger.logInfo("Channel " + i + " display range set to range " + antibodyInfos[i].BrightnessMin + " to " + antibodyInfos[i].BrightnessMax, actionId);
-                    }
-//                    logger.logInfo("All channel display ranges set", actionId);
-
-                    Project project = QuPathGUI.getInstance().getProject();
-
-                    qupath.refreshProject();
-
-//                    logger.logInfo("Current Image Data server path:" + imageDataCurrent.getServerPath(), actionId);
-
-
-                    List<ProjectImageEntry> imageEntries = (List<ProjectImageEntry>)project.getImageList();
-                    if (!imageEntries.isEmpty()) {
-                        var numberOfEntries = imageEntries.size();
-//                        logger.logInfo("Number of Entries in Project: " + numberOfEntries, actionId);
-                        ProjectImageEntry latestImageEntry = imageEntries.get(numberOfEntries - 1);
-                        latestImageEntry.saveImageData(imageDataCurrent);
-                    } else {
-//                        logger.logError("No Entries found for Project: ", actionId);
-                    }
-    //                    viewer.repaintEntireImage();
-
-                    project.syncChanges();
-//                    logger.logInfo("Project synced", actionId);
-                } catch (Exception e) {
-//                    logger.logErrorWithStackTrace("QuPath Adjust Brightnesses Inner Exception - " + e.getMessage(), e.getStackTrace(), actionId);
-                    JOptionPane.showMessageDialog(null, "QuPath Adjust Brightnesses Inner Exception: " + e.getMessage(), "X-Zell: RabbitMQ", JOptionPane.ERROR_MESSAGE);
-                } finally {
-                    latch.countDown(); // Signal that work is done
-                }
-            });
+            runInnerAction(latch, imageDataCurrent);
 
             // Wait for the JavaFX Application Thread work to complete
             latch.await();
@@ -118,6 +78,55 @@ public class AdjustBrightnessCommand implements Runnable {
             JOptionPane.showMessageDialog(null, "QuPath Adjust Brightnesses Exception - " + e.getMessage(), "X-Zell: RabbitMQ", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void runInnerAction(CountDownLatch latch, ImageData<BufferedImage> imageDataCurrent) {
+        if (!Platform.isFxApplicationThread()) {
+//            logger.logInfo("Passing to Application thread", this.actionId);
+            Platform.runLater(() -> runInnerAction(latch, imageDataCurrent));
+            return;
+        }
+        try {
+            Integer[] colors = Arrays.stream(antibodyInfos)
+                    .map(AntibodyInfo::getColorCode)
+                    .map(AdjustBrightnessCommand::getRgbFromColorCode)
+                    .toArray(Integer[]::new);
+            setChannelColors(imageDataCurrent, colors);
+//            logger.logInfo("Channel colors set", actionId);
+//            logger.logInfo("Commencing setting of channel display ranges", actionId);
+            for (int i = 0; i < antibodyInfos.length; i++) {
+                setChannelDisplayRange(imageDataCurrent, i, antibodyInfos[i].BrightnessMin, antibodyInfos[i].BrightnessMax);
+//                logger.logInfo("Channel " + i + " display range set to range " + antibodyInfos[i].BrightnessMin + " to " + antibodyInfos[i].BrightnessMax, actionId);
+            }
+//            logger.logInfo("All channel display ranges set", actionId);
+
+            Project project = qupath.getProject();
+
+            qupath.refreshProject();
+
+//            logger.logInfo("Current Image Data server path:" + imageDataCurrent.getServerPath(), actionId);
+
+
+            List<ProjectImageEntry> imageEntries = (List<ProjectImageEntry>)project.getImageList();
+            if (!imageEntries.isEmpty()) {
+                var numberOfEntries = imageEntries.size();
+//                logger.logInfo("Number of Entries in Project: " + numberOfEntries, actionId);
+                ProjectImageEntry latestImageEntry = imageEntries.get(numberOfEntries - 1);
+                latestImageEntry.saveImageData(imageDataCurrent);
+//            } else {
+//                logger.logError("No Entries found for Project: ", actionId);
+            }
+//                    viewer.repaintEntireImage();
+
+            project.syncChanges();
+//            logger.logInfo("Project synced", actionId);
+        } catch (Exception e) {
+//            logger.logErrorWithStackTrace("QuPath Adjust Brightnesses Inner Exception - " + e.getMessage(), e.getStackTrace(), actionId);
+            JOptionPane.showMessageDialog(null, "QuPath Adjust Brightnesses Inner Exception: " + e.getMessage(), "X-Zell: RabbitMQ", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            latch.countDown(); // Signal that work is done
+        }
+    }
+
 
     public static Integer getRgbFromColorCode(String colorCode_) {
         // logger.logInfo("Color Code: " + colorCode_, actionId);

@@ -1,4 +1,4 @@
-package qupath.reordered.image.viewer.commands;
+package qupath.adjustbrightness.commands;
 
 import qupath.lib.gui.scripting.QPEx;
 import qupath.lib.gui.viewer.QuPathViewer;

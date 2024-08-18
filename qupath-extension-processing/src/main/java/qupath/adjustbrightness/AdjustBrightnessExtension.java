@@ -1,12 +1,11 @@
-package qupath.reordered.image.viewer;
+package qupath.adjustbrightness;
 
 import qupath.lib.common.Version;
 import qupath.lib.gui.ActionTools;
 import qupath.lib.gui.QuPathGUI;
 import qupath.lib.gui.extensions.QuPathExtension;
 import qupath.lib.gui.tools.MenuTools;
-import qupath.reordered.image.viewer.commands.AdjustBrightnessCommand;
-import qupath.reordered.image.viewer.commands.ShowReorderedChannelViewerCommand;
+import qupath.adjustbrightness.commands.AdjustBrightnessCommand;
 
 public class AdjustBrightnessExtension implements QuPathExtension {
 
@@ -28,7 +27,7 @@ public class AdjustBrightnessExtension implements QuPathExtension {
 
     @Override
     public String getDescription() {
-        return "Implements the adjustment of bBrightness for all channels";
+        return "Implements the adjustment of brightness for all channels";
     }
 
     @Override
