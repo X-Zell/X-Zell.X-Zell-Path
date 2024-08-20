@@ -104,6 +104,23 @@ public class AddProjectImageAction implements IQuPathExtensionAction {
 
             BufferedImage img = null;
             synchronized (imageData) {
+                var server = imageData.getServer();
+                BufferedImage defaultThumbnail = null;
+                int retryCount = 3;
+                while (defaultThumbnail == null && retryCount > 0) {
+                    try {
+                        defaultThumbnail = server.getDefaultThumbnail(server.nZSlices() / 2, 0);
+                        if (defaultThumbnail == null) {
+                            logger.logError("Thumbnail generation returned null, retrying...", actionId);
+                            Thread.sleep(200); // wait a bit before retrying
+                        }
+                    } catch (Exception e) {
+                        logger.logError("Error during thumbnail generation: " + e.getMessage(), actionId);
+                        JOptionPane.showMessageDialog(null, "Error during thumbnail generation: " + e.getMessage(), "X-Zell: Add Image", JOptionPane.ERROR_MESSAGE);
+                    }
+                    retryCount--;
+                }
+
                 img = ProjectCommands.getThumbnailRGB(imageData.getServer());
             }
             logger.logInfo("Thumbnail is " + img.getWidth() + " x " + img.getHeight(), actionId);
@@ -138,7 +155,7 @@ public class AddProjectImageAction implements IQuPathExtensionAction {
 
             QuPathViewer viewer = getCurrentViewer();
             logger.logInfo("QuPath viewer obtained", actionId);
-            // Point of Failure with Cannot invoke "java.awt.image.BufferedImage.getWidth()" because "imgInput" is null
+
             synchronized (imageData) {
                 viewer.setImageData(imageData);
             }
