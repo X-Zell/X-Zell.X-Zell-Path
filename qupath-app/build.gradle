@@ -15,6 +15,10 @@ buildscript {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
+
+        maven {
+            url "https://mvnrepository.com/artifact/com.rabbitmq/amqp-client"
+        }
     }
 
     dependencies {

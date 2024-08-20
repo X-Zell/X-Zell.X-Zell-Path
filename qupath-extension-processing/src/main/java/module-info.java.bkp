@@ -13,10 +13,12 @@ module qupath.extension.processing {
     requires org.bytedeco.opencv;
 	requires org.controlsfx.controls;
 	requires org.locationtech.jts;
+
+    requires com.rabbitmq.client;
 	
 	exports qupath.imagej.gui;
 	
 	provides qupath.lib.gui.extensions.QuPathExtension with 
-		qupath.imagej.gui.IJExtension, qupath.helloworld.HelloWorldExtension, qupath.reordered.image.viewer.ReorderedChannelViewerExtension, qupath.adjustbrightness.AdjustBrightnessExtension, qupath.opencv.gui.OpenCVExtension;
+		qupath.imagej.gui.IJExtension, qupath.helloworld.HelloWorldExtension, qupath.reordered.image.viewer.ReorderedChannelViewerExtension, qupath.adjustbrightness.AdjustBrightnessExtension, qupath.rabbitmq.RabbitMqExtension, qupath.opencv.gui.OpenCVExtension;
 	
 }

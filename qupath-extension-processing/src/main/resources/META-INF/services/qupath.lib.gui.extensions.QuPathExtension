@@ -3,3 +3,4 @@ qupath.helloworld.HelloWorldExtension
 qupath.reordered.image.viewer.ReorderedChannelViewerExtension
 qupath.adjustbrightness.AdjustBrightnessExtension
 qupath.process.gui.ProcessingExtension
+qupath.rabbitmq.RabbitMqExtension

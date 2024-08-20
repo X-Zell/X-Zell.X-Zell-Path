@@ -10,4 +10,12 @@ description = "QuPath extension to support processing (including many common com
 
 dependencies {
   implementation libs.commons.math
+
+  implementation "org.slf4j:slf4j-api:1.7.30"
+  implementation 'com.rabbitmq:amqp-client:5.16.0'
+  implementation 'com.google.code.gson:gson:2.10'
+
+  // IOC container
+  implementation 'com.google.inject:guice:5.0.1'
+  implementation 'javax.inject:javax.inject:1'
 }
